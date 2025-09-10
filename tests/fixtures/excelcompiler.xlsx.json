@@ -1,0 +1,12 @@
+{
+    "cycles": false,
+    "excel_hash": "7444ee8021fba06ae8e09e4dcd73c37f",
+    "cell_map": {
+        "trim-range!B1": 24,
+        "trim-range!B2": "=(_C_(\"trim-range!B1\") + sum_(_R_(\"trim-range!D4:E4\"))) + _C_(\"trim-range!D5\")",
+        "trim-range!D4": 4,
+        "trim-range!D5": 100,
+        "trim-range!E4": 8
+    },
+    "filename": "/workspaces/pycel/tests/fixtures/excelcompiler.xlsx"
+}

@@ -1,0 +1,86 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pycel"
+description = "A library for compiling excel spreadsheets to python code & visualizing them as a graph"
+readme = "README.rst"
+license = {text = "GPL-3.0"}
+authors = [
+    {name = "Dirk Gorissen", email = "dgorissen@gmail.com"},
+    {name = "Stephen Rauch", email = "stephen.rauch+pycel@gmail.com"},
+]
+maintainers = [
+    {name = "Stephen Rauch", email = "stephen.rauch+pycel@gmail.com"},
+]
+keywords = ["excel", "compiler", "formula", "parser"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.6"
+dependencies = [
+    "networkx>=2.0,<2.7",
+    "numpy<2.0",  # numpy 2.0+ breaks GEXF export due to removed np.float_
+    "openpyxl>=2.6.2",
+    "python-dateutil",
+    "ruamel.yaml",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/stephenrauch/pycel"
+Repository = "https://github.com/stephenrauch/pycel"
+Issues = "https://github.com/stephenrauch/pycel/issues"
+
+[project.optional-dependencies]
+visualization = [
+    "matplotlib",  # for plot_graph()
+    "pydot",       # for DOT export
+]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "pytest-flake8",
+    "flake8-import-order",
+    "restructuredtext-lint",
+    "tox",
+    "codecov",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {attr = "pycel.version.__version__"}
+
+# NumPy 2.0 Compatibility Note
+# ============================
+# GEXF export functionality requires NumPy < 2.0 due to NetworkX 2.6.x using
+# the deprecated np.float_ type that was removed in NumPy 2.0.
+# 
+# Specific error: AttributeError: `np.float_` was removed in the NumPy 2.0 release. Use `np.float64` instead.
+# Location: networkx/readwrite/gexf.py line 223 in construct_types()
+# 
+# Workarounds:
+# 1. Use NumPy < 2.0 (recommended for full functionality)
+# 2. Use NumPy 2.0+ but avoid GEXF export (use DOT or matplotlib instead)
+# 3. Wait for NetworkX update to support NumPy 2.0+
+#
+# All other pycel functionality works correctly with NumPy 2.0+

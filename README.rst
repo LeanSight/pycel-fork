@@ -16,11 +16,17 @@ for an illustration.
 Required python libraries:
     `dateutil <https://dateutil.readthedocs.io/en/stable/>`_,
     `networkx <https://networkx.github.io/>`_,
-    `numpy <https://www.numpy.org/>`_,
+    `numpy <https://www.numpy.org/>`_ (< 2.0 for GEXF export compatibility),
     `openpyxl <https://openpyxl.readthedocs.io/en/stable/>`_,
     `ruamel.yaml <https://yaml.readthedocs.io/en/latest/>`_, and optionally:
     `matplotlib <https://matplotlib.org/>`_,
     `pydot <https://github.com/pydot/pydot>`_
+
+**Note on NumPy 2.0 Compatibility:**
+    GEXF graph export functionality requires NumPy < 2.0 due to NetworkX's use of
+    the deprecated ``np.float_`` type that was removed in NumPy 2.0. All other
+    functionality works with NumPy 2.0+. For full visualization capabilities,
+    install with ``pip install "numpy<2.0"``.
 
 The full motivation behind pycel including some examples & screenshots is
 described in this `blog post <http://elazungu.wordpress.com/2011/10/19/pycel-compiling-excel-spreadsheets-to-python-and-making-pretty-pictures>`_.

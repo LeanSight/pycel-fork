@@ -392,9 +392,26 @@ class ExcelCompiler:
         write_dot(self.dep_graph, filename)
 
     def export_to_gexf(self, filename=None):
-        from networkx.readwrite.gexf import write_gexf
-        filename = filename or (self.filename + '.gexf')
-        write_gexf(self.dep_graph, filename)
+        """Export dependency graph to GEXF format for Gephi visualization.
+        
+        Note: Requires NumPy < 2.0 due to NetworkX compatibility.
+        With NumPy 2.0+, use export_to_dot() or plot_graph() instead.
+        """
+        try:
+            from networkx.readwrite.gexf import write_gexf
+            filename = filename or (self.filename + '.gexf')
+            write_gexf(self.dep_graph, filename)
+        except AttributeError as e:
+            if 'np.float_' in str(e) and 'NumPy 2.0' in str(e):
+                raise RuntimeError(
+                    "GEXF export is not compatible with NumPy 2.0+. "
+                    "NetworkX uses deprecated np.float_ type. "
+                    "Solutions: 1) Use 'pip install \"numpy<2.0\"', "
+                    "2) Use export_to_dot() instead, or "
+                    "3) Use plot_graph() for visualization."
+                ) from e
+            else:
+                raise
 
     def plot_graph(self, layout_type='spring_layout'):
         try:

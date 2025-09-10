@@ -62,11 +62,22 @@ setup(
     test_suite='pytest',
     install_requires=[
         'networkx>=2.0,<2.7',
-        'numpy',
+        'numpy<2.0',  # numpy 2.0+ breaks GEXF export due to removed np.float_
         'openpyxl>=2.6.2',
         'python-dateutil',
         'ruamel.yaml',
     ],
+    extras_require={
+        'visualization': [
+            'matplotlib',  # for plot_graph()
+            'pydot',       # for DOT export
+        ],
+        'dev': [
+            'pytest',
+            'pytest-cov',
+            'flake8',
+        ],
+    },
     python_requires='>=3.6',
     author='Dirk Gorissen, Stephen Rauch',
     author_email='dgorissen@gmail.com',
