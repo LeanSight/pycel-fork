@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 """
-Ejemplos prácticos de uso de las capacidades de Model Focusing en Pycel.
+Practical examples of Model Focusing capabilities in Pycel.
 
-Este archivo contiene ejemplos reales de cómo utilizar las funcionalidades core
-de model focusing para análisis industrial de planillas Excel.
+This file contains real examples of how to use the core model focusing
+functionalities for industrial analysis of Excel spreadsheets.
 """
 
 import os
@@ -16,20 +16,20 @@ from pycel import ExcelCompiler
 
 def example_1_financial_model_audit():
     """
-    Ejemplo 1: Auditoría de Modelo Financiero
+    Example 1: Financial Model Audit
     
-    Demuestra cómo extraer y validar un sub-modelo crítico
-    de un modelo financiero complejo.
+    Demonstrates how to extract and validate a critical sub-model
+    from a complex financial model.
     """
-    print("=== Ejemplo 1: Auditoría de Modelo Financiero ===")
+    print("=== Example 1: Financial Model Audit ===")
     
-    # Simular carga de modelo financiero
-    # En la práctica, sería: ExcelCompiler('financial_model.xlsx')
+    # Simulate loading financial model
+    # In practice, this would be: ExcelCompiler('financial_model.xlsx')
     excel = create_sample_financial_model()
     
-    print(f"Modelo original: {len(excel.cell_map)} celdas")
+    print(f"Original model: {len(excel.cell_map)} cells")
     
-    # Definir inputs y outputs críticos
+    # Define critical inputs and outputs
     input_addrs = [
         'Assumptions!B1',  # Revenue_Growth
         'Assumptions!B2',  # COGS_Rate
@@ -42,56 +42,56 @@ def example_1_financial_model_audit():
         'Summary!B6'   # FCF
     ]
     
-    print(f"Inputs críticos: {input_addrs}")
-    print(f"Outputs críticos: {output_addrs}")
+    print(f"Critical inputs: {input_addrs}")
+    print(f"Critical outputs: {output_addrs}")
     
-    # Extraer sub-modelo
+    # Extract sub-model
     excel.trim_graph(input_addrs=input_addrs, output_addrs=output_addrs)
     
-    print(f"Modelo trimmed: {len(excel.cell_map)} celdas")
-    print(f"Reducción: {((len(excel.cell_map) / len(excel.cell_map)) * 100):.1f}%")
+    print(f"Trimmed model: {len(excel.cell_map)} cells")
+    print(f"Reduction: {((len(excel.cell_map) / len(excel.cell_map)) * 100):.1f}%")
     
-    # Validar precisión del sub-modelo
+    # Validate sub-model accuracy
     validation_results = excel.validate_calcs(output_addrs=output_addrs)
     
     if validation_results:
-        print("⚠️ Discrepancias encontradas:")
+        print("⚠️ Discrepancies found:")
         for category, errors in validation_results.items():
-            print(f"  {category}: {len(errors)} errores")
+            print(f"  {category}: {len(errors)} errors")
     else:
-        print("✅ Sub-modelo validado correctamente")
+        print("✅ Sub-model validated correctly")
     
-    # Mostrar valores actuales
-    print("\nValores actuales:")
+    # Show current values
+    print("\nCurrent values:")
     for addr in output_addrs:
         try:
             value = excel.evaluate(addr)
             print(f"  {addr}: {value:,.2f}" if isinstance(value, (int, float)) else f"  {addr}: {value}")
         except:
-            print(f"  {addr}: No disponible")
+            print(f"  {addr}: Not available")
     
     return excel
 
 
 def example_2_sensitivity_analysis():
     """
-    Ejemplo 2: Análisis de Sensibilidad
+    Example 2: Sensitivity Analysis
     
-    Demuestra cómo realizar análisis de sensibilidad
-    modificando inputs y observando impacto en outputs.
+    Demonstrates how to perform sensitivity analysis
+    by modifying inputs and observing impact on outputs.
     """
-    print("\n=== Ejemplo 2: Análisis de Sensibilidad ===")
+    print("\n=== Example 2: Sensitivity Analysis ===")
     
-    # Usar modelo del ejemplo anterior
+    # Use model from previous example
     excel = create_sample_financial_model()
     
-    # Extraer sub-modelo para análisis
+    # Extract sub-model for analysis
     input_addrs = ['Assumptions!B1', 'Assumptions!B2']  # Revenue_Growth, COGS_Rate
     output_addrs = ['Summary!B5']  # EBITDA
     
     excel.trim_graph(input_addrs=input_addrs, output_addrs=output_addrs)
     
-    # Definir escenarios de sensibilidad
+    # Define sensitivity scenarios
     scenarios = [
         {'name': 'Base Case', 'Revenue_Growth': 0.05, 'COGS_Rate': 0.60},
         {'name': 'Optimistic', 'Revenue_Growth': 0.10, 'COGS_Rate': 0.55},
@@ -100,17 +100,17 @@ def example_2_sensitivity_analysis():
         {'name': 'Cost Pressure', 'Revenue_Growth': 0.05, 'COGS_Rate': 0.70},
     ]
     
-    print("Análisis de Escenarios:")
+    print("Scenario Analysis:")
     print("Scenario".ljust(15) + "Rev Growth".ljust(12) + "COGS Rate".ljust(12) + "EBITDA")
     print("-" * 55)
     
     results = []
     for scenario in scenarios:
-        # Configurar inputs del escenario
+        # Configure scenario inputs
         excel.set_value('Assumptions!B1', scenario['Revenue_Growth'])
         excel.set_value('Assumptions!B2', scenario['COGS_Rate'])
         
-        # Evaluar output
+        # Evaluate output
         try:
             ebitda = excel.evaluate('Summary!B5')
             results.append({
@@ -124,9 +124,9 @@ def example_2_sensitivity_analysis():
         except Exception as e:
             print(f"{scenario['name']:<15}Error: {str(e)}")
     
-    # Análisis de sensibilidad individual
-    print("\nAnálisis de Sensibilidad Individual (Revenue Growth):")
-    excel.set_value('Assumptions!B2', 0.60)  # Fijar COGS
+    # Individual sensitivity analysis
+    print("\nIndividual Sensitivity Analysis (Revenue Growth):")
+    excel.set_value('Assumptions!B2', 0.60)  # Fix COGS
     
     growth_rates = [0.00, 0.02, 0.05, 0.08, 0.10, 0.12, 0.15]
     print("Growth Rate".ljust(15) + "EBITDA".ljust(15) + "Change")
@@ -152,109 +152,109 @@ def example_2_sensitivity_analysis():
 
 def example_3_dependency_analysis():
     """
-    Ejemplo 3: Análisis de Dependencias
+    Example 3: Dependency Analysis
     
-    Demuestra cómo analizar y visualizar las dependencias
-    de celdas críticas en el modelo.
+    Demonstrates how to analyze and visualize dependencies
+    of critical cells in the model.
     """
-    print("\n=== Ejemplo 3: Análisis de Dependencias ===")
+    print("\n=== Example 3: Dependency Analysis ===")
     
     excel = create_sample_financial_model()
     
-    # Analizar dependencias de una celda crítica
+    # Analyze dependencies of a critical cell
     critical_cell = 'Summary!B5'  # EBITDA
     
-    print(f"Analizando dependencias de: {critical_cell}")
+    print(f"Analyzing dependencies for: {critical_cell}")
     
-    # Generar árbol de dependencias
-    print("\nÁrbol de Dependencias:")
+    # Generate dependency tree
+    print("\nDependency Tree:")
     try:
         for line in excel.value_tree_str(critical_cell):
             print(line)
     except Exception as e:
-        print(f"Error generando árbol: {e}")
+        print(f"Error generating tree: {e}")
     
-    # Análisis bidireccional
-    print(f"\nAnálisis Bidireccional para {critical_cell}:")
+    # Bidirectional analysis
+    print(f"\nBidirectional Analysis for {critical_cell}:")
     
     try:
-        # Evaluar para construir grafo
+        # Evaluate to build graph
         excel.evaluate(critical_cell)
         
         target_cell = excel.cell_map.get(critical_cell)
         if target_cell:
-            # Precedentes (inputs)
+            # Precedents (inputs)
             predecessors = list(excel.dep_graph.predecessors(target_cell))
-            print(f"Precedentes directos ({len(predecessors)}):")
-            for pred in predecessors[:5]:  # Mostrar solo los primeros 5
+            print(f"Direct precedents ({len(predecessors)}):")
+            for pred in predecessors[:5]:  # Show only first 5
                 print(f"  ← {pred.address.address}")
             
-            # Dependientes (outputs)
+            # Dependents (outputs)
             successors = list(excel.dep_graph.successors(target_cell))
-            print(f"Dependientes directos ({len(successors)}):")
-            for succ in successors[:5]:  # Mostrar solo los primeros 5
+            print(f"Direct dependents ({len(successors)}):")
+            for succ in successors[:5]:  # Show only first 5
                 print(f"  → {succ.address.address}")
         else:
-            print("Celda no encontrada en el grafo")
+            print("Cell not found in graph")
             
     except Exception as e:
-        print(f"Error en análisis bidireccional: {e}")
+        print(f"Error in bidirectional analysis: {e}")
     
-    # Exportar grafo para análisis visual
-    print("\nExportando grafo para análisis visual...")
+    # Export graph for visual analysis
+    print("\nExporting graph for visual analysis...")
     try:
         with tempfile.TemporaryDirectory() as tmpdir:
             gexf_file = os.path.join(tmpdir, 'dependency_graph.gexf')
             excel.export_to_gexf(gexf_file)
-            print(f"Grafo exportado a: {gexf_file}")
-            print("(Puede abrirse en Gephi para visualización)")
+            print(f"Graph exported to: {gexf_file}")
+            print("(Can be opened in Gephi for visualization)")
     except Exception as e:
-        print(f"Error exportando grafo: {e}")
+        print(f"Error exporting graph: {e}")
 
 
 def example_4_model_validation():
     """
-    Ejemplo 4: Validación Robusta de Modelo
+    Example 4: Robust Model Validation
     
-    Demuestra diferentes tipos de validación disponibles
-    para asegurar la integridad del modelo.
+    Demonstrates different types of validation available
+    to ensure model integrity.
     """
-    print("\n=== Ejemplo 4: Validación Robusta de Modelo ===")
+    print("\n=== Example 4: Robust Model Validation ===")
     
     excel = create_sample_financial_model()
     
-    # Validación completa del modelo
-    print("1. Validación completa del modelo...")
+    # Complete model validation
+    print("1. Complete model validation...")
     validation_results = excel.validate_calcs()
     
-    print(f"Resultados de validación:")
+    print(f"Validation results:")
     if not validation_results:
-        print("  ✅ Todos los cálculos son consistentes con Excel")
+        print("  ✅ All calculations are consistent with Excel")
     else:
         for category, errors in validation_results.items():
-            print(f"  ⚠️ {category}: {len(errors)} problemas")
+            print(f"  ⚠️ {category}: {len(errors)} issues")
             if isinstance(errors, dict):
                 for error_type, error_list in errors.items():
-                    print(f"    - {error_type}: {len(error_list)} casos")
+                    print(f"    - {error_type}: {len(error_list)} cases")
     
-    # Validación de celdas específicas
-    print("\n2. Validación de celdas críticas...")
+    # Validation of specific cells
+    print("\n2. Critical cell validation...")
     critical_cells = ['Summary!B1', 'Summary!B5', 'Summary!B6']  # Revenue, EBITDA, FCF
     
     for cell in critical_cells:
         try:
             cell_validation = excel.validate_calcs(output_addrs=[cell])
             if not cell_validation:
-                print(f"  ✅ {cell}: Validado")
+                print(f"  ✅ {cell}: Validated")
             else:
-                print(f"  ⚠️ {cell}: Problemas detectados")
+                print(f"  ⚠️ {cell}: Issues detected")
         except Exception as e:
             print(f"  ❌ {cell}: Error - {e}")
     
-    # Validación de serialización
-    print("\n3. Validación de serialización...")
+    # Serialization validation
+    print("\n3. Serialization validation...")
     try:
-        # Crear sub-modelo para testing
+        # Create sub-model for testing
         excel.trim_graph(
             input_addrs=['Assumptions!B1'],  # Revenue_Growth
             output_addrs=['Summary!B1']      # Revenue
@@ -265,72 +265,72 @@ def example_4_model_validation():
         )
         
         if not serialization_results:
-            print("  ✅ Serialización consistente")
+            print("  ✅ Serialization consistent")
         else:
-            print(f"  ⚠️ Problemas en serialización: {len(serialization_results)}")
+            print(f"  ⚠️ Serialization issues: {len(serialization_results)}")
             
     except Exception as e:
-        print(f"  ❌ Error en validación de serialización: {e}")
+        print(f"  ❌ Error in serialization validation: {e}")
     
-    # Validación con tolerancia personalizada
-    print("\n4. Validación con tolerancia personalizada...")
+    # Validation with custom tolerance
+    print("\n4. Custom tolerance validation...")
     try:
         tolerance_validation = excel.validate_calcs(
             output_addrs=['Summary!B1'],  # Revenue
-            tolerance=0.01  # 1 centavo de tolerancia
+            tolerance=0.01  # 1 cent tolerance
         )
         
         if not tolerance_validation:
-            print("  ✅ Validación con tolerancia: Aprobada")
+            print("  ✅ Tolerance validation: Passed")
         else:
-            print("  ⚠️ Diferencias mayores a tolerancia detectadas")
+            print("  ⚠️ Differences greater than tolerance detected")
             
     except Exception as e:
-        print(f"  ❌ Error en validación con tolerancia: {e}")
+        print(f"  ❌ Error in tolerance validation: {e}")
 
 
 def example_5_export_and_documentation():
     """
-    Ejemplo 5: Exportación y Documentación
+    Example 5: Export and Documentation
     
-    Demuestra cómo exportar modelos en diferentes formatos
-    y generar documentación automática.
+    Demonstrates how to export models in different formats
+    and generate automatic documentation.
     """
-    print("\n=== Ejemplo 5: Exportación y Documentación ===")
+    print("\n=== Example 5: Export and Documentation ===")
     
     excel = create_sample_financial_model()
     
-    # Crear sub-modelo para exportación
+    # Create sub-model for export
     excel.trim_graph(
         input_addrs=['Assumptions!B1', 'Assumptions!B2'],  # Revenue_Growth, COGS_Rate
         output_addrs=['Summary!B5']  # EBITDA
     )
     
-    print(f"Modelo preparado para exportación: {len(excel.cell_map)} celdas")
+    print(f"Model prepared for export: {len(excel.cell_map)} cells")
     
-    # Exportar en múltiples formatos
+    # Export in multiple formats
     with tempfile.TemporaryDirectory() as tmpdir:
         base_path = os.path.join(tmpdir, 'financial_model')
         
-        print("\nExportando modelo en múltiples formatos:")
+        print("\nExporting model in multiple formats:")
         
-        # 1. Pickle (más rápido)
+        # 1. Pickle (fastest)
         try:
             pickle_file = f"{base_path}.pkl"
             excel.to_file(pickle_file)
             size_pkl = os.path.getsize(pickle_file)
             print(f"  ✅ Pickle: {pickle_file} ({size_pkl:,} bytes)")
         except Exception as e:
-            print(f"  ❌ Error exportando Pickle: {e}")
+            print(f"  ❌ Error exporting Pickle: {e}")
         
-        # 2. YAML (legible)
+        # 2. YAML (readable)
         try:
             yaml_file = f"{base_path}.yml"
             excel.to_file(yaml_file)
             size_yml = os.path.getsize(yaml_file)
             print(f"  ✅ YAML: {yaml_file} ({size_yml:,} bytes)")
         except Exception as e:
-            print(f"  ❌ Error exportando YAML: {e}")
+            print(f"  ❌ Error exporting YAML: {e}")
         
         # 3. JSON (portable)
         try:
@@ -339,65 +339,65 @@ def example_5_export_and_documentation():
             size_json = os.path.getsize(json_file)
             print(f"  ✅ JSON: {json_file} ({size_json:,} bytes)")
         except Exception as e:
-            print(f"  ❌ Error exportando JSON: {e}")
+            print(f"  ❌ Error exporting JSON: {e}")
         
-        # 4. GEXF para visualización
+        # 4. GEXF for visualization
         try:
             gexf_file = f"{base_path}.gexf"
             excel.export_to_gexf(gexf_file)
             size_gexf = os.path.getsize(gexf_file)
             print(f"  ✅ GEXF: {gexf_file} ({size_gexf:,} bytes)")
         except Exception as e:
-            print(f"  ❌ Error exportando GEXF: {e}")
+            print(f"  ❌ Error exporting GEXF: {e}")
     
-    # Generar documentación de dependencias
-    print("\nGenerando documentación de dependencias:")
+    # Generate dependency documentation
+    print("\nGenerating dependency documentation:")
     
     critical_outputs = ['Summary!B5']  # EBITDA
     
     for output in critical_outputs:
-        print(f"\n--- Documentación para {output} ---")
+        print(f"\n--- Documentation for {output} ---")
         try:
-            # Mostrar árbol de dependencias
+            # Show dependency tree
             tree_lines = list(excel.value_tree_str(output))
-            for line in tree_lines[:10]:  # Mostrar solo las primeras 10 líneas
+            for line in tree_lines[:10]:  # Show only first 10 lines
                 print(line)
             
             if len(tree_lines) > 10:
-                print(f"... y {len(tree_lines) - 10} líneas más")
+                print(f"... and {len(tree_lines) - 10} more lines")
                 
         except Exception as e:
-            print(f"Error generando documentación: {e}")
+            print(f"Error generating documentation: {e}")
     
-    # Estadísticas del modelo
-    print(f"\nEstadísticas del modelo:")
-    print(f"  Total de celdas: {len(excel.cell_map)}")
-    print(f"  Nodos en grafo: {len(excel.dep_graph.nodes())}")
-    print(f"  Edges en grafo: {len(excel.dep_graph.edges())}")
+    # Model statistics
+    print(f"\nModel statistics:")
+    print(f"  Total cells: {len(excel.cell_map)}")
+    print(f"  Graph nodes: {len(excel.dep_graph.nodes())}")
+    print(f"  Graph edges: {len(excel.dep_graph.edges())}")
     
-    # Identificar celdas con más dependencias
+    # Identify cells with most dependencies
     if excel.dep_graph.nodes():
-        print(f"\nCeldas con más dependientes:")
+        print(f"\nCells with most dependents:")
         cell_deps = [(cell, len(list(excel.dep_graph.successors(cell)))) 
                      for cell in excel.dep_graph.nodes()]
         cell_deps.sort(key=lambda x: x[1], reverse=True)
         
         for cell, dep_count in cell_deps[:5]:
-            print(f"  {cell.address.address}: {dep_count} dependientes")
+            print(f"  {cell.address.address}: {dep_count} dependents")
 
 
 def create_sample_financial_model():
     """
-    Crea un modelo financiero de ejemplo para demostración.
+    Creates a sample financial model for demonstration.
     
-    En un caso real, esto sería reemplazado por:
+    In a real case, this would be replaced by:
     return ExcelCompiler('path/to/financial_model.xlsx')
     """
     from openpyxl import Workbook
     
     wb = Workbook()
     
-    # Hoja de Assumptions
+    # Assumptions sheet
     assumptions = wb.create_sheet('Assumptions')
     assumptions['A1'] = 'Revenue_Growth'
     assumptions['B1'] = 0.05  # 5%
@@ -408,7 +408,7 @@ def create_sample_financial_model():
     assumptions['A4'] = 'Base_Revenue'
     assumptions['B4'] = 1000000  # $1M
     
-    # Hoja de Summary
+    # Summary sheet
     summary = wb.create_sheet('Summary')
     summary['A1'] = 'Revenue'
     summary['B1'] = '=Assumptions!B4*(1+Assumptions!B1)'
@@ -423,15 +423,15 @@ def create_sample_financial_model():
     summary['A6'] = 'FCF'
     summary['B6'] = '=B5*0.8'  # Simplified FCF
     
-    # Remover hoja por defecto
+    # Remove default sheet
     wb.remove(wb['Sheet'])
     
     return ExcelCompiler(excel=wb)
 
 
 def main():
-    """Ejecuta todos los ejemplos."""
-    print("Ejemplos de Model Focusing en Pycel")
+    """Runs all examples."""
+    print("Model Focusing Examples in Pycel")
     print("=" * 50)
     
     try:
@@ -442,10 +442,10 @@ def main():
         example_5_export_and_documentation()
         
         print("\n" + "=" * 50)
-        print("✅ Todos los ejemplos ejecutados exitosamente")
+        print("✅ All examples executed successfully")
         
     except Exception as e:
-        print(f"\n❌ Error ejecutando ejemplos: {e}")
+        print(f"\n❌ Error executing examples: {e}")
         import traceback
         traceback.print_exc()
 

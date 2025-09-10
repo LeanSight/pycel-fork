@@ -1,19 +1,19 @@
 """
-Model Focusing - Capacidades Core de Pycel
+Model Focusing - Pycel Core Capabilities
 
-Este módulo contiene documentación, tests y ejemplos de las capacidades
-core de Model Focusing en Pycel:
+This module contains documentation, tests and examples of the core
+Model Focusing capabilities in Pycel:
 
-1. Extracción precisa de sub-modelos
-2. Análisis bidireccional de dependencias  
-3. Validación robusta contra Excel
-4. Visualización y exportación flexible
-5. Manejo de estructuras Excel complejas
+1. Precise sub-model extraction
+2. Bidirectional dependency analysis  
+3. Robust validation against Excel
+4. Flexible visualization and export
+5. Complex Excel structure handling
 
-Archivos incluidos:
-- README.md: Documentación completa de capacidades
-- test_model_focusing_core.py: Tests que validan funcionalidades
-- examples.py: Ejemplos prácticos de uso
+Included files:
+- README.md: Complete capability documentation
+- test_model_focusing_core.py: Tests that validate functionalities
+- examples.py: Practical usage examples
 """
 
 __version__ = "1.0.0"

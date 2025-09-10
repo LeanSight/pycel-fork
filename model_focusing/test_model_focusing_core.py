@@ -1,13 +1,13 @@
 # -*- coding: UTF-8 -*-
 """
-Tests para validar las capacidades core de Model Focusing en Pycel.
+Tests to validate the core Model Focusing capabilities in Pycel.
 
-Este módulo contiene tests específicos que validan las 5 capacidades principales:
-1. Extracción precisa de sub-modelos
-2. Análisis bidireccional de dependencias  
-3. Validación robusta contra Excel
-4. Visualización y exportación flexible
-5. Manejo de estructuras Excel complejas
+This module contains specific tests that validate the 5 main capabilities:
+1. Precise sub-model extraction
+2. Bidirectional dependency analysis  
+3. Robust validation against Excel
+4. Flexible visualization and export
+5. Complex Excel structure handling
 """
 
 import os
@@ -23,76 +23,76 @@ from pycel.excelutil import AddressRange, AddressCell
 
 
 class TestSubModelExtraction:
-    """Tests para validar extracción precisa de sub-modelos."""
+    """Tests to validate precise sub-model extraction."""
     
     def test_basic_trim_graph_functionality(self, excel_compiler):
-        """Test básico de trim_graph con inputs y outputs específicos."""
+        """Basic test of trim_graph with specific inputs and outputs."""
         input_addrs = ['trim-range!D5']
         output_addrs = ['trim-range!B2']
         
-        # Evaluar valor original
+        # Evaluate original value
         original_value = excel_compiler.evaluate(output_addrs[0])
         original_cell_count = len(excel_compiler.cell_map)
         
-        # Aplicar trim_graph
+        # Apply trim_graph
         excel_compiler.trim_graph(input_addrs, output_addrs)
         
-        # Verificar que el modelo se redujo
+        # Verify that the model was reduced
         trimmed_cell_count = len(excel_compiler.cell_map)
         assert trimmed_cell_count < original_cell_count
         
-        # Verificar que el valor se mantiene
+        # Verify that the value is maintained
         trimmed_value = excel_compiler.evaluate(output_addrs[0])
         assert original_value == trimmed_value
     
     def test_trim_graph_with_ranges(self, excel_compiler):
-        """Test de trim_graph usando rangos como inputs."""
-        input_addrs = ['trim-range!D4:E4']  # Usar string en lugar de AddressRange
+        """Test of trim_graph using ranges as inputs."""
+        input_addrs = ['trim-range!D4:E4']  # Use string instead of AddressRange
         output_addrs = ['trim-range!B2']
         
         original_value = excel_compiler.evaluate(output_addrs[0])
         
-        # Aplicar trimming
+        # Apply trimming
         excel_compiler.trim_graph(input_addrs, output_addrs)
         
-        # Verificar funcionalidad después del trimming
+        # Verify functionality after trimming
         assert original_value == excel_compiler.evaluate(output_addrs[0])
         
-        # Test de modificación de valores individuales en el rango
+        # Test modification of individual values in the range
         excel_compiler.set_value('trim-range!D4', 5)
         excel_compiler.set_value('trim-range!E4', 6)
         new_value = excel_compiler.evaluate(output_addrs[0])
-        # Verificar que el valor cambió (no necesariamente -1)
+        # Verify that the value changed (not necessarily -1)
         assert new_value != original_value
     
     def test_trim_graph_preserves_formula_logic(self, excel_compiler):
-        """Verifica que el trimming preserva la lógica de las fórmulas."""
+        """Verifies that trimming preserves formula logic."""
         input_addrs = ['trim-range!D5']
         output_addrs = ['trim-range!B2']
         
-        # Evaluar primero para construir el grafo
+        # Evaluate first to build the graph
         original_value = excel_compiler.evaluate(output_addrs[0])
         
-        # Cambiar input antes del trimming
+        # Change input before trimming
         excel_compiler.set_value(input_addrs[0], 200)
         value_before_trim = excel_compiler.evaluate(output_addrs[0])
         
-        # Aplicar trimming
+        # Apply trimming
         excel_compiler.trim_graph(input_addrs, output_addrs)
         
-        # Verificar que la lógica se mantiene
+        # Verify that logic is maintained
         value_after_trim = excel_compiler.evaluate(output_addrs[0])
         assert value_before_trim == value_after_trim
         
-        # Cambiar input después del trimming
+        # Change input after trimming
         excel_compiler.set_value(input_addrs[0], 300)
         value_after_change = excel_compiler.evaluate(output_addrs[0])
         assert value_after_change == value_before_trim + 100
     
     def test_trim_graph_error_handling(self, excel_compiler):
-        """Test de manejo de errores en trim_graph."""
-        # Test con input address que no existe (usar una celda válida pero no conectada)
-        input_addrs = ['trim-range!D5', 'trim-range!H1']  # H1 existe pero no está conectado
+        """Test of error handling in trim_graph."""
+        # Test with input address that doesn't exist (use a valid but unconnected cell)
+        input_addrs = ['trim-range!D5', 'trim-range!H1']  # H1 exists but is not connected
         output_addrs = ['trim-range!B2']
         
         excel_compiler.evaluate(output_addrs[0])
@@ -100,15 +100,15 @@ class TestSubModelExtraction:
         
         try:
             excel_compiler.trim_graph(input_addrs, output_addrs)
-            # Verificar que se generó warning
+            # Verify that warning was generated
             assert excel_compiler.log.warning.call_count >= 1
         except ValueError:
-            # Si falla con ValueError, es comportamiento esperado para inputs no conectados
+            # If it fails with ValueError, it's expected behavior for unconnected inputs
             pass
     
     def test_trim_graph_unused_input_exception(self, excel_compiler):
-        """Test que verifica excepción cuando input no afecta outputs."""
-        input_addrs = ['trim-range!G1']  # Input no conectado
+        """Test that verifies exception when input doesn't affect outputs."""
+        input_addrs = ['trim-range!G1']  # Unconnected input
         output_addrs = ['trim-range!B2']
         
         excel_compiler.evaluate(output_addrs[0])
@@ -119,18 +119,18 @@ class TestSubModelExtraction:
 
 
 class TestBidirectionalDependencyAnalysis:
-    """Tests para análisis bidireccional de dependencias."""
+    """Tests for bidirectional dependency analysis."""
     
     def test_dependency_graph_structure(self, excel_compiler):
-        """Verifica la estructura del grafo de dependencias."""
-        # Evaluar una celda para construir el grafo
+        """Verifies the dependency graph structure."""
+        # Evaluate una celda para construir el grafo
         excel_compiler.evaluate('trim-range!B2')
         
-        # Verificar que el grafo tiene nodos y edges
+        # Verify that the graph has nodes and edges
         assert len(excel_compiler.dep_graph.nodes()) > 0
         assert len(excel_compiler.dep_graph.edges()) > 0
         
-        # Verificar que es un grafo dirigido
+        # Verify that it is a directed graph
         assert excel_compiler.dep_graph.is_directed()
     
     def test_predecessors_and_successors(self, excel_compiler):
@@ -140,11 +140,11 @@ class TestBidirectionalDependencyAnalysis:
         # Obtener celda del grafo
         target_cell = excel_compiler.cell_map['trim-range!B2']
         
-        # Verificar que tiene precedentes
+        # Verify that it has precedents
         predecessors = list(excel_compiler.dep_graph.predecessors(target_cell))
         assert len(predecessors) > 0
         
-        # Verificar que los precedentes tienen la celda como sucesor
+        # Verify that precedents have the cell as successor
         for pred in predecessors:
             successors = list(excel_compiler.dep_graph.successors(pred))
             assert target_cell in successors
@@ -201,44 +201,44 @@ class TestBidirectionalDependencyAnalysis:
         
         traverse_predecessors(target_cell)
         
-        # Verificar que se alcanzaron las dependencias esperadas
+        # Verify that se alcanzaron las dependencias esperadas
         expected_deps = ['trim-range!B1', 'trim-range!D5']
         for dep in expected_deps:
             assert dep in reachable_cells
 
 
 class TestRobustValidation:
-    """Tests para validación robusta contra Excel."""
+    """Tests for robust validation against Excel."""
     
     def test_validate_calcs_no_errors(self, excel_compiler):
-        """Test básico de validate_calcs sin errores."""
+        """Basic test of validate_calcs without errors."""
         validation_results = excel_compiler.validate_calcs()
         
-        # En un modelo bien formado, puede haber algunos errores menores
-        # pero no debería haber errores críticos de mismatch
+        # In a well-formed model, there may be some minor errors
+        # but there should be no critical mismatch errors
         if validation_results:
-            # Verificar que no hay mismatches críticos
+            # Verify that no hay mismatches críticos
             assert 'mismatch' not in validation_results or len(validation_results['mismatch']) == 0
         else:
             assert validation_results == {}
     
     def test_validate_calcs_specific_outputs(self, excel_compiler):
-        """Test de validación con outputs específicos."""
+        """Test of validation with specific outputs."""
         output_addrs = ['trim-range!B2']
         validation_results = excel_compiler.validate_calcs(output_addrs=output_addrs)
         
         assert validation_results == {}
     
     def test_validate_calcs_with_tolerance(self, excel_compiler):
-        """Test de validación con tolerancia personalizada."""
-        # Crear una pequeña discrepancia artificial
+        """Test of validation with custom tolerance."""
+        # Create una pequeña discrepancia artificial
         cell = excel_compiler.cell_map.get('trim-range!B2')
         if cell:
             original_value = cell.value
             # Simular pequeña diferencia
             cell.value = original_value + 0.0001
             
-            # Validar con tolerancia alta (debería pasar)
+            # Validar con tolerancia alta (should pasar)
             validation_results = excel_compiler.validate_calcs(
                 output_addrs=['trim-range!B2'], 
                 tolerance=0.001
@@ -257,8 +257,8 @@ class TestRobustValidation:
         assert failed_cells == {}
     
     def test_validation_error_categorization(self):
-        """Test de categorización de errores de validación."""
-        # Crear workbook con error conocido
+        """Test of validation error categorization."""
+        # Create workbook with known error
         wb = Workbook()
         ws = wb.active
         ws['A1'] = 1
@@ -267,15 +267,15 @@ class TestRobustValidation:
         
         excel_compiler = ExcelCompiler(excel=wb)
         
-        # La validación debería categorizar el error
+        # Validation should categorize the error
         validation_results = excel_compiler.validate_calcs(raise_exceptions=False)
         
-        # Verificar que se detectó algún tipo de error
-        assert len(validation_results) >= 0  # Puede ser 0 si maneja el error gracefully
+        # Verify that some type of error was detected
+        assert len(validation_results) >= 0  # Can be 0 if it handles the error gracefully
     
     def test_circular_reference_validation(self, circular_ws):
-        """Test de validación con referencias circulares."""
-        # Evaluar primero para construir el grafo
+        """Test of validation with circular references."""
+        # Evaluate primero para construir el grafo
         try:
             result = circular_ws.evaluate('Sheet1!B2', iterations=100, tolerance=0.01)
             
@@ -291,35 +291,35 @@ class TestRobustValidation:
                 result2 = circular_ws.evaluate('Sheet1!B2', iterations=100, tolerance=0.01)
                 assert isinstance(result2, (int, float))
             except AssertionError:
-                # Si no se pueden cambiar valores, al menos verificar que evalúa
+                # If not se pueden cambiar valores, al menos verificar que evalúa
                 pass
                 
         except Exception:
-            # Si no hay referencias circulares en el fixture, crear test básico
+            # If not hay referencias circulares en el fixture, crear test básico
             assert hasattr(circular_ws, 'cycles')
             assert circular_ws.cycles is not None
 
 
 class TestVisualizationAndExport:
-    """Tests para visualización y exportación flexible."""
+    """Tests for flexible visualization and export."""
     
     def test_gexf_export(self, excel_compiler):
         """Test de exportación a formato GEXF."""
         with tempfile.TemporaryDirectory() as tmpdir:
             filename = os.path.join(tmpdir, 'test_model.gexf')
             
-            # Evaluar para construir grafo
+            # Evaluate para construir grafo
             excel_compiler.evaluate('trim-range!B2')
             
-            # Exportar (puede fallar por incompatibilidad numpy 2.0)
+            # Exportar (can fallar por incompatibilidad numpy 2.0)
             try:
                 excel_compiler.export_to_gexf(filename)
                 
-                # Verificar que el archivo se creó
+                # Verify that the file was created
                 assert os.path.exists(filename)
                 assert os.path.getsize(filename) > 0
             except (AttributeError, TypeError) as e:
-                # Error conocido con numpy 2.0 y networkx
+                # Known error with numpy 2.0 and networkx
                 if 'float_' in str(e) or 'numpy' in str(e):
                     pytest.skip("GEXF export incompatible with numpy 2.0")
                 else:
@@ -336,7 +336,7 @@ class TestVisualizationAndExport:
         except ImportError as e:
             assert "pydot" in str(e)
         
-        # Test básico de que el método existe y maneja errores correctamente
+        # Basic test that the method exists and handles errors correctly
         assert hasattr(excel_compiler, 'export_to_dot')
         
         # Mock completo para simular funcionamiento
@@ -353,7 +353,7 @@ class TestVisualizationAndExport:
                         # Si llega aquí, verificar que se llamó write_dot
                         mock_write.assert_called_once()
                     except (ImportError, TypeError):
-                        # Errores esperados en el mock
+                        # Expected errors in the mock
                         pass
     
     def test_plot_graph_with_mock(self, excel_compiler):
@@ -371,7 +371,7 @@ class TestVisualizationAndExport:
                 # Configurar mock
                 mock_nx.spring_layout.return_value = {}
                 
-                # Debería ejecutar sin errores
+                # Should execute without errors
                 excel_compiler.plot_graph()
                 
                 # Verificar llamadas
@@ -394,14 +394,14 @@ class TestVisualizationAndExport:
                 filename = f"{base_path}.{fmt}"
                 excel_compiler.to_file(filename)
                 
-                # Verificar que el archivo se creó
+                # Verify that the file was created
                 assert os.path.exists(filename)
                 assert os.path.getsize(filename) > 0
                 
-                # Verificar que se puede cargar
+                # Verify that se can cargar
                 loaded_compiler = ExcelCompiler.from_file(filename)
                 
-                # Verificar que funciona igual
+                # Verify that funciona igual
                 original_value = excel_compiler.evaluate(output_addrs[0])
                 loaded_value = loaded_compiler.evaluate(output_addrs[0])
                 assert original_value == loaded_value
@@ -423,32 +423,32 @@ class TestVisualizationAndExport:
         # Calcular reducción
         reduction_ratio = (original_count - trimmed_count) / original_count
         
-        # Verificar que hubo reducción significativa
+        # Verify that hubo reducción significativa
         assert reduction_ratio > 0.1  # Al menos 10% de reducción
         assert trimmed_count < original_count
 
 
 class TestComplexExcelStructures:
-    """Tests para manejo de estructuras Excel complejas."""
+    """Tests for complex Excel structure handling."""
     
     def test_defined_names_access(self, excel_compiler):
         """Test de acceso a defined names."""
-        # Verificar que se pueden acceder defined names
+        # Verify that se pueden acceder defined names
         try:
             defined_names = excel_compiler.excel.defined_names
             assert isinstance(defined_names, dict)
         except AttributeError:
-            # Si no hay defined_names en el fixture, verificar que el atributo existe
+            # If not hay defined_names en el fixture, verificar que el atributo existe
             assert hasattr(excel_compiler.excel, 'defined_names')
     
     def test_multi_sheet_dependencies(self, excel_compiler):
         """Test de dependencias entre múltiples hojas."""
-        # Evaluar celda que puede tener dependencias cross-sheet
+        # Evaluate celda que can tener dependencias cross-sheet
         try:
             result = excel_compiler.evaluate('Sheet1!B1')
             assert result is not None
         except KeyError:
-            # Si no existe Sheet1, crear test con hojas disponibles
+            # If not existe Sheet1, crear test con hojas disponibles
             available_sheets = list(excel_compiler.excel.workbook.sheetnames)
             assert len(available_sheets) > 0
     
@@ -459,18 +459,18 @@ class TestComplexExcelStructures:
             result = excel_compiler.evaluate('sref!B3')
             assert result is not None
         except (KeyError, AttributeError):
-            # Si no hay structured references, verificar que el método existe
+            # If there are no structured references, verify that the method exists
             assert hasattr(excel_compiler.excel, 'table')
     
     def test_conditional_formatting_access(self, excel_compiler):
         """Test de acceso a conditional formatting."""
-        # Verificar que se puede acceder a conditional formatting
+        # Verify that se can acceder a conditional formatting
         try:
             # Intentar acceder a conditional formatting de una celda
             cf_rules = excel_compiler.excel.conditional_format('trim-range!B2')
             assert isinstance(cf_rules, list)
         except (AttributeError, KeyError):
-            # Si no hay conditional formatting, verificar que el método existe
+            # If there is no conditional formatting, verify that the method exists
             assert hasattr(excel_compiler.excel, 'conditional_format')
     
     def test_range_handling(self, excel_compiler):
@@ -485,7 +485,7 @@ class TestComplexExcelStructures:
             try:
                 result = excel_compiler.evaluate(range_addr)
                 assert result is not None
-                # Verificar que es una estructura de datos apropiada
+                # Verify that es una estructura de datos apropiada
                 assert isinstance(result, (tuple, list, int, float, str))
             except KeyError:
                 # Algunos rangos pueden no existir en el fixture
@@ -493,14 +493,14 @@ class TestComplexExcelStructures:
     
     def test_formula_complexity_handling(self, excel_compiler):
         """Test de manejo de fórmulas complejas."""
-        # Evaluar celda con fórmula compleja
+        # Evaluate celda con fórmula compleja
         excel_compiler.evaluate('trim-range!B2')
         
-        # Verificar que la celda tiene fórmula
+        # Verify that la celda tiene fórmula
         cell = excel_compiler.cell_map.get('trim-range!B2')
         if cell and hasattr(cell, 'formula'):
             assert cell.formula is not None
-            # Verificar que la fórmula tiene dependencias
+            # Verify that la fórmula tiene dependencias
             if hasattr(cell.formula, 'needed_addresses'):
                 assert len(cell.formula.needed_addresses) > 0
 
@@ -514,12 +514,12 @@ def excel_compiler():
     if fixture_path.exists():
         return ExcelCompiler(filename=str(fixture_path))
     else:
-        # Crear un workbook simple para testing
+        # Create un workbook simple para testing
         wb = Workbook()
         ws = wb.active
         ws.title = 'trim-range'
         
-        # Crear estructura básica para testing
+        # Create estructura básica para testing
         ws['D1'] = 1
         ws['D2'] = 2
         ws['D3'] = 3
@@ -543,7 +543,7 @@ def circular_ws():
     if fixture_path.exists():
         return ExcelCompiler(filename=str(fixture_path), cycles=True)
     else:
-        # Crear workbook con referencia circular simple
+        # Create workbook con referencia circular simple
         wb = Workbook()
         ws = wb.active
         

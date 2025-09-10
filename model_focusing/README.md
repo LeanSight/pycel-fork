@@ -1,62 +1,62 @@
-# Model Focusing en Pycel
+# Model Focusing in Pycel
 
-## Resumen
+## Overview
 
-Este documento analiza las capacidades **core** de Model Focusing en Pycel, enfocándose en las funcionalidades robustas y bien implementadas que están listas para uso en análisis industrial de planillas Excel.
+This document analyzes the **core** Model Focusing capabilities in Pycel, focusing on robust and well-implemented functionalities that are ready for industrial use in Excel spreadsheet analysis.
 
-## Capacidades Core Validadas ✅
+## Validated Core Capabilities ✅
 
-### 1. Extracción Precisa de Sub-modelos
+### 1. Precise Sub-model Extraction
 
-**Funcionalidad Principal: `trim_graph()`**
+**Main Functionality: `trim_graph()`**
 
-Pycel permite extraer sub-porciones específicas de modelos Excel complejos, manteniendo solo las celdas necesarias para el análisis.
+Pycel allows extracting specific sub-portions of complex Excel models, keeping only the cells necessary for analysis.
 
 ```python
-# Definir inputs y outputs del sub-modelo
+# Define sub-model inputs and outputs
 input_addrs = ['Assumptions!GrowthRate', 'Assumptions!CostInflation']
 output_addrs = ['Dashboard!KPI1', 'Dashboard!ROI']
 
-# Extraer sub-modelo
+# Extract sub-model
 excel.trim_graph(input_addrs=input_addrs, output_addrs=output_addrs)
 ```
 
-**Algoritmo de Extracción:**
-1. **Build Graph**: Construye el grafo para todas las salidas requeridas
-2. **Walk Dependents**: Navega desde inputs hacia dependientes (`successors`)
-3. **Walk Precedents**: Navega desde outputs hacia precedentes (`predecessors`)
-4. **Identify Buried Inputs**: Detecta inputs que no son leaf nodes
-5. **Prune Cells**: Elimina celdas innecesarias, convierte fórmulas a valores
+**Extraction Algorithm:**
+1. **Build Graph**: Constructs the graph for all required outputs
+2. **Walk Dependents**: Navigates from inputs to dependents (`successors`)
+3. **Walk Precedents**: Navigates from outputs to precedents (`predecessors`)
+4. **Identify Buried Inputs**: Detects inputs that are not leaf nodes
+5. **Prune Cells**: Removes unnecessary cells, converts formulas to values
 
-**Beneficios:**
-- Reduce significativamente el tamaño del modelo
-- Mantiene precisión de cálculos
-- Facilita análisis de sensibilidad
-- Mejora performance de evaluación
+**Benefits:**
+- Significantly reduces model size
+- Maintains calculation precision
+- Facilitates sensitivity analysis
+- Improves evaluation performance
 
-### 2. Análisis Bidireccional de Dependencias
+### 2. Bidirectional Dependency Analysis
 
-**Navegación del Grafo de Dependencias**
+**Dependency Graph Navigation**
 
-Pycel utiliza NetworkX para crear un grafo dirigido que modela las dependencias entre celdas, permitiendo análisis en ambas direcciones.
+Pycel uses NetworkX to create a directed graph that models cell dependencies, enabling analysis in both directions.
 
 ```python
-# Análisis upstream (precedentes)
+# Upstream analysis (precedents)
 for precedent in excel.dep_graph.predecessors(cell):
     print(f"Precedent: {precedent.address}")
 
-# Análisis downstream (dependientes)  
+# Downstream analysis (dependents)  
 for dependent in excel.dep_graph.successors(cell):
     print(f"Dependent: {dependent.address}")
 ```
 
 **Value Tree Analysis:**
 ```python
-# Generar árbol de dependencias formateado
+# Generate formatted dependency tree
 for line in excel.value_tree_str('Dashboard!ROI'):
     print(line)
 
-# Output ejemplo:
+# Example output:
 # Dashboard!ROI = 0.15
 #  Calculations!NetIncome = 1000000
 #   Revenue!Total = 5000000
@@ -65,25 +65,25 @@ for line in excel.value_tree_str('Dashboard!ROI'):
 #    Assumptions!CostInflation = 0.03
 ```
 
-**Detección de Ciclos:**
-- Identifica referencias circulares automáticamente
-- Marca ciclos en el value tree: `<- cycle`
-- Soporte para evaluación iterativa con tolerancia configurable
+**Cycle Detection:**
+- Automatically identifies circular references
+- Marks cycles in the value tree: `<- cycle`
+- Support for iterative evaluation with configurable tolerance
 
-### 3. Validación Robusta contra Excel
+### 3. Robust Validation Against Excel
 
-**Validación de Cálculos (`validate_calcs`)**
+**Calculation Validation (`validate_calcs`)**
 
-Compara sistemáticamente los valores calculados por Pycel contra los valores originales de Excel.
+Systematically compares values calculated by Pycel against original Excel values.
 
 ```python
-# Validar todos los cálculos
+# Validate all calculations
 validation_results = excel.validate_calcs()
 
-# Validar outputs específicos
+# Validate specific outputs
 validation_results = excel.validate_calcs(output_addrs=['Dashboard!ROI'])
 
-# Estructura de resultados
+# Results structure
 {
     'mismatch': {
         'Sheet1!B2': Mismatch(original=100, calced=99.99, formula='=A1*A2')
@@ -97,125 +97,125 @@ validation_results = excel.validate_calcs(output_addrs=['Dashboard!ROI'])
 }
 ```
 
-**Validación de Serialización (`validate_serialized`)**
+**Serialization Validation (`validate_serialized`)**
 
-Verifica que el modelo serializado/deserializado produce los mismos resultados que el original.
+Verifies that the serialized/deserialized model produces the same results as the original.
 
 ```python
-# Validar round-trip de serialización
+# Validate serialization round-trip
 failed_cells = excel.validate_serialized(output_addrs=output_addrs)
-assert failed_cells == {}  # Sin errores esperados
+assert failed_cells == {}  # No errors expected
 ```
 
-**Características de Validación:**
-- **Tolerancia Configurable**: Maneja diferencias de precisión flotante
-- **Categorización de Errores**: Separa mismatches, funciones no implementadas y excepciones
-- **Tree Verification**: Valida precedentes automáticamente
-- **Progress Tracking**: Reporta progreso en modelos grandes
+**Validation Features:**
+- **Configurable Tolerance**: Handles floating-point precision differences
+- **Error Categorization**: Separates mismatches, unimplemented functions, and exceptions
+- **Tree Verification**: Automatically validates precedents
+- **Progress Tracking**: Reports progress on large models
 
-### 4. Visualización y Exportación Flexible
+### 4. Flexible Visualization and Export
 
-**Múltiples Formatos de Exportación**
+**Multiple Export Formats**
 
 ```python
-# Exportar para análisis en Gephi
+# Export for Gephi analysis
 excel.export_to_gexf('model_graph.gexf')
 
-# Exportar para Graphviz
+# Export for Graphviz
 excel.export_to_dot('model_graph.dot')
 
-# Visualización interactiva con matplotlib
+# Interactive visualization with matplotlib
 excel.plot_graph(layout_type='spring_layout')
 ```
 
-**Serialización de Modelos**
+**Model Serialization**
 ```python
-# Múltiples formatos soportados
-excel.to_file('model.pkl')    # Pickle (más rápido)
-excel.to_file('model.yml')    # YAML (legible)
+# Multiple supported formats
+excel.to_file('model.pkl')    # Pickle (fastest)
+excel.to_file('model.yml')    # YAML (readable)
 excel.to_file('model.json')   # JSON (portable)
 
-# Cargar modelo serializado
+# Load serialized model
 excel_loaded = ExcelCompiler.from_file('model.pkl')
 ```
 
-**Beneficios de Visualización:**
-- **Análisis Visual**: Identificar patrones y cuellos de botella
-- **Documentación**: Generar diagramas de dependencias
-- **Debugging**: Visualizar flujo de cálculos
-- **Comunicación**: Explicar lógica de modelo a stakeholders
+**Visualization Benefits:**
+- **Visual Analysis**: Identify patterns and bottlenecks
+- **Documentation**: Generate dependency diagrams
+- **Debugging**: Visualize calculation flow
+- **Communication**: Explain model logic to stakeholders
 
-### 5. Manejo de Estructuras Excel Complejas
+### 5. Complex Excel Structure Handling
 
-**Named Ranges y Defined Names**
+**Named Ranges and Defined Names**
 ```python
-# Acceso a named ranges del workbook
+# Access workbook named ranges
 defined_names = excel.excel.defined_names
 for name, destinations in defined_names.items():
     print(f"Named range: {name} -> {destinations}")
 ```
 
-**Tablas Estructuradas**
+**Structured Tables**
 ```python
-# Soporte para tablas Excel
+# Excel table support
 table, sheet_name = excel.excel.table('SalesData')
 table_name = excel.excel.table_name_containing('Sheet1!B5')
 ```
 
-**Referencias Circulares**
+**Circular References**
 ```python
-# Configuración de evaluación iterativa
+# Iterative evaluation configuration
 excel = ExcelCompiler(filename='model.xlsx', cycles={
     'iterations': 100,
     'tolerance': 0.001
 })
 
-# Evaluación con parámetros específicos
+# Evaluation with specific parameters
 result = excel.evaluate('Sheet1!B2', iterations=50, tolerance=0.01)
 ```
 
 **Multi-sheet Dependencies**
-- Manejo automático de dependencias entre hojas
-- Resolución de referencias cross-sheet
-- Soporte para nombres de hojas con espacios y caracteres especiales
+- Automatic handling of inter-sheet dependencies
+- Cross-sheet reference resolution
+- Support for sheet names with spaces and special characters
 
 **Conditional Formatting**
 ```python
-# Análisis de formatos condicionales
+# Conditional format analysis
 cf_rules = excel.excel.conditional_format('Sheet1!A1')
 ```
 
-## Casos de Uso Típicos
+## Typical Use Cases
 
-### 1. Auditoría de Modelo Financiero
+### 1. Financial Model Audit
 ```python
-# Cargar modelo completo
+# Load complete model
 excel = ExcelCompiler('financial_model.xlsx')
 
-# Extraer sub-modelo crítico
+# Extract critical sub-model
 excel.trim_graph(
     input_addrs=['Assumptions!Revenue_Growth', 'Assumptions!COGS_Rate'],
     output_addrs=['Summary!EBITDA', 'Summary!FCF']
 )
 
-# Validar precisión
+# Validate accuracy
 validation = excel.validate_calcs()
 if validation:
-    print("⚠️ Discrepancias encontradas:", validation)
+    print("⚠️ Discrepancies found:", validation)
 else:
-    print("✅ Modelo validado correctamente")
+    print("✅ Model validated correctly")
 ```
 
-### 2. Análisis de Sensibilidad
+### 2. Sensitivity Analysis
 ```python
-# Definir escenarios
+# Define scenarios
 scenarios = [
     {'Assumptions!Growth': 0.05, 'Assumptions!Margin': 0.15},
     {'Assumptions!Growth': 0.10, 'Assumptions!Margin': 0.20},
     {'Assumptions!Growth': 0.15, 'Assumptions!Margin': 0.25}
 ]
 
-# Evaluar cada escenario
+# Evaluate each scenario
 results = []
 for scenario in scenarios:
     for addr, value in scenario.items():
@@ -226,9 +226,9 @@ for scenario in scenarios:
     print(f"Scenario {scenario}: NPV = {result}")
 ```
 
-### 3. Documentación de Dependencias
+### 3. Dependency Documentation
 ```python
-# Generar documentación de dependencias
+# Generate dependency documentation
 critical_outputs = ['KPI1', 'KPI2', 'ROI']
 
 for output in critical_outputs:
@@ -236,54 +236,54 @@ for output in critical_outputs:
     for line in excel.value_tree_str(output):
         print(line)
 
-# Exportar para análisis visual
+# Export for visual analysis
 excel.export_to_gexf('model_dependencies.gexf')
 ```
 
-## Limitaciones Conocidas
+## Known Limitations
 
-### Funciones Excel
-- **VBA**: No soportado, requiere reimplementación manual
-- **Funciones Dinámicas**: OFFSET, INDIRECT pueden fallar si celdas no están compiladas
-- **Coverage**: Solo implementa funciones según necesidad del proyecto
+### Excel Functions
+- **VBA**: Not supported, requires manual reimplementation
+- **Dynamic Functions**: OFFSET, INDIRECT may fail if cells are not compiled
+- **Coverage**: Only implements functions based on project needs
 
 ### Performance
-- **Escalabilidad**: Adecuado para modelos medianos (~10K fórmulas)
-- **Memory**: Mantiene modelo completo en memoria
-- **Optimización**: No optimizado para casos masivos
+- **Scalability**: Suitable for medium-sized models (~10K formulas)
+- **Memory**: Keeps complete model in memory
+- **Optimization**: Not optimized for massive cases
 
-### Análisis Avanzado
-- **Métricas**: No incluye métricas de complejidad automáticas
-- **Impact Analysis**: Análisis de impacto limitado
-- **Risk Assessment**: No hay análisis de riesgo integrado
+### Advanced Analysis
+- **Metrics**: Does not include automatic complexity metrics
+- **Impact Analysis**: Limited impact analysis
+- **Risk Assessment**: No integrated risk analysis
 
-## Conclusión
+## Conclusion
 
-Las capacidades core de Model Focusing en Pycel proporcionan una base sólida para:
+The core Model Focusing capabilities in Pycel provide a solid foundation for:
 
-✅ **Extracción y análisis de sub-modelos Excel complejos**  
-✅ **Validación rigurosa contra Excel original**  
-✅ **Análisis bidireccional de dependencias**  
-✅ **Visualización y documentación de modelos**  
-✅ **Manejo de estructuras Excel avanzadas**  
+✅ **Extraction and analysis of complex Excel sub-models**  
+✅ **Rigorous validation against original Excel**  
+✅ **Bidirectional dependency analysis**  
+✅ **Model visualization and documentation**  
+✅ **Advanced Excel structure handling**  
 
-Estas funcionalidades son **robustas, bien testadas y listas para uso industrial** en auditorías de modelos financieros, análisis de sensibilidad y extracción de lógica de negocio de spreadsheets complejos.
+These functionalities are **robust, well-tested and ready for industrial use** in financial model audits, sensitivity analysis, and business logic extraction from complex spreadsheets.
 
-## Nota de Compatibilidad NumPy
+## NumPy Compatibility Note
 
-### ⚠️ **Limitación con NumPy 2.0+**
-La exportación GEXF (`export_to_gexf()`) requiere **NumPy < 2.0** debido a una incompatibilidad en NetworkX que usa el tipo deprecado `np.float_`.
+### ⚠️ **Limitation with NumPy 2.0+**
+GEXF export (`export_to_gexf()`) requires **NumPy < 2.0** due to a NetworkX incompatibility that uses the deprecated `np.float_` type.
 
-**Instalación recomendada:**
+**Recommended installation:**
 ```bash
 pip install "numpy<2.0" pycel
 ```
 
-**Funcionalidades por versión de NumPy:**
-- ✅ **NumPy 1.x**: Todas las funcionalidades incluyendo GEXF export
-- ⚠️ **NumPy 2.0+**: Todas las funcionalidades excepto GEXF export
+**Functionality by NumPy version:**
+- ✅ **NumPy 1.x**: All functionalities including GEXF export
+- ⚠️ **NumPy 2.0+**: All functionalities except GEXF export
 
-**Alternativas para visualización con NumPy 2.0+:**
-- `export_to_dot()` - Para Graphviz
-- `plot_graph()` - Para matplotlib
-- Serialización en otros formatos (PKL, YAML, JSON)
+**Visualization alternatives with NumPy 2.0+:**
+- `export_to_dot()` - For Graphviz
+- `plot_graph()` - For matplotlib
+- Serialization in other formats (PKL, YAML, JSON)
