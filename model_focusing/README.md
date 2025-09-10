@@ -4,6 +4,14 @@
 
 This document analyzes the **core** Model Focusing capabilities in Pycel, focusing on robust and well-implemented functionalities that are ready for industrial use in Excel spreadsheet analysis.
 
+## Documentation Files
+
+- **[README.md](README.md)** - This overview of Model Focusing capabilities
+- **[VERIFIED_PYCEL_API_DOCUMENTATION.md](VERIFIED_PYCEL_API_DOCUMENTATION.md)** - Complete verified API reference (100% tested)
+- **[examples.py](examples.py)** - Practical usage examples
+- **[test_model_focusing_core.py](test_model_focusing_core.py)** - Core functionality tests
+- **[test_documentation_verification.py](test_documentation_verification.py)** - API documentation verification tests
+
 ## Validated Core Capabilities ✅
 
 ### 1. Precise Sub-model Extraction
