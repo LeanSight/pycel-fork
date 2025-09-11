@@ -695,10 +695,8 @@ def test_multi_area_range_defined_name():
     ws['B2'] = '=SUM(_a2,A3)'
     ws['B3'] = '=SUM(_a1_a3)'
 
-    wb.defined_names.append(
-        DefinedName(name='_a2', attr_text='Sheet!$A$4,Sheet!$A$1:$A$2'))
-    wb.defined_names.append(
-        DefinedName(name='_a1_a3', attr_text='Sheet!$A$1,Sheet!$A$3'))
+    wb.defined_names['_a2'] = DefinedName(name='_a2', attr_text='Sheet!$A$4,Sheet!$A$1:$A$2')
+    wb.defined_names['_a1_a3'] = DefinedName(name='_a1_a3', attr_text='Sheet!$A$1,Sheet!$A$3')
     excel_compiler = ExcelCompiler(excel=wb)
 
     output_addrs = ['Sheet!B1:B3']

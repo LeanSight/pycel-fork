@@ -1,0 +1,15 @@
+{
+    "cycles": false,
+    "excel_hash": null,
+    "cell_map": {
+        "Assumptions!B1": 0.05,
+        "Assumptions!B4": 1000000,
+        "Summary!B1": "=_C_(\"Assumptions!B4\") * (1 + _C_(\"Assumptions!B1\"))",
+        "Summary!B2": "=_C_(\"Summary!B1\") * _C_(\"Assumptions!B2\")",
+        "Summary!B3": "=_C_(\"Summary!B1\") - _C_(\"Summary!B2\")",
+        "Summary!B4": "=_C_(\"Summary!B1\") * _C_(\"Assumptions!B3\")",
+        "Summary!B5": "=_C_(\"Summary!B3\") - _C_(\"Summary!B4\")",
+        "Summary!B6": "=_C_(\"Summary!B5\") * 0.8"
+    },
+    "filename": "/workspaces/pycel/Unknown"
+}

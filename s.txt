@@ -1,0 +1,579 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.1, pytest-8.4.2, pluggy-1.6.0
+rootdir: /workspaces/pycel
+configfile: tox.ini
+plugins: anyio-4.9.0, flake8-1.3.0, cov-7.0.0
+collected 2986 items
+
+tests/lib/test_date_time.py ............................................ [  1%]
+........................................................................ [  3%]
+........................................................................ [  6%]
+........................................................................ [  8%]
+..                                                                       [  8%]
+tests/lib/test_engineering.py .......................................... [ 10%]
+........................................................................ [ 12%]
+.........................                                                [ 13%]
+tests/lib/test_function_helpers.py .......................               [ 14%]
+tests/lib/test_function_info.py ....                                     [ 14%]
+tests/lib/test_information.py F......................................... [ 15%]
+......................................................                   [ 17%]
+tests/lib/test_logical.py .............................................. [ 19%]
+........................................................................ [ 21%]
+.........                                                                [ 21%]
+tests/lib/test_lookup.py ............................................... [ 23%]
+........................................................................ [ 25%]
+........................................................................ [ 28%]
+........................................................................ [ 30%]
+........................................................................ [ 33%]
+...                                                                      [ 33%]
+tests/lib/test_stats.py ................................................ [ 34%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+................                                                         [ 40%]
+tests/lib/test_text.py F................................................ [ 41%]
+........................................................................ [ 44%]
+........................................................................ [ 46%]
+........................................................................ [ 48%]
+.............................                                            [ 49%]
+tests/test_excelcompiler.py ......................F..F.........F.F...... [ 51%]
+...................................F                                     [ 52%]
+tests/test_excelformula.py ............................................. [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 58%]
+........................................................................ [ 61%]
+...................F............                                         [ 62%]
+tests/test_excellib.py ................................................. [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 71%]
+........................................................................ [ 73%]
+........................................................................ [ 76%]
+.....................................................................    [ 78%]
+tests/test_excelutil.py ................................................ [ 80%]
+........................................................................ [ 82%]
+....................F................................................... [ 84%]
+........................................................................ [ 87%]
+........................................................................ [ 89%]
+........................................................................ [ 92%]
+........................................................................ [ 94%]
+........................................................................ [ 96%]
+..................................                                       [ 98%]
+tests/test_excelwrapper.py ...............F......................FF..... [ 99%]
+........                                                                 [ 99%]
+tests/test_package.py ...EE                                              [100%]
+
+==================================== ERRORS ====================================
+__________________ ERROR at setup of test_binder_requirements __________________
+
+    @pytest.fixture(scope='session')
+    def setup_py():
+        with mock.patch('setuptools.setup'), mock.patch('setuptools.find_packages'):
+            cwd = os.getcwd()
+            os.chdir(repo_root)
+            import importlib
+>           setup = importlib.import_module('setup')
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_package.py:35: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/python/3.12.1/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'setup', import_ = <function _gcd_import at 0x7f22d2fbc0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'setup'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+______________________ ERROR at setup of test_changes_rst ______________________
+
+    @pytest.fixture(scope='session')
+    def setup_py():
+        with mock.patch('setuptools.setup'), mock.patch('setuptools.find_packages'):
+            cwd = os.getcwd()
+            os.chdir(repo_root)
+            import importlib
+>           setup = importlib.import_module('setup')
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_package.py:35: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/python/3.12.1/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'setup', import_ = <function _gcd_import at 0x7f22d2fbc0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'setup'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+=================================== FAILURES ===================================
+_____________________________ test_information_ws ______________________________
+
+fixture_xls_copy = <function fixture_xls_copy.<locals>.wrapped at 0x7f22c979a5c0>
+
+    def test_information_ws(fixture_xls_copy):
+        compiler = ExcelCompiler(fixture_xls_copy('information.xlsx'))
+        result = compiler.validate_serialized()
+>       assert result == {}
+E       assert {'exceptions'...inedName'")]}} == {}
+E         
+E         Left contains 1 more item:
+E         {'exceptions': {"AttributeError: 'DefinedNameDict' object has no attribute 'definedName'": [('Information!L5',
+E                                                                                                      '=N(A5)',
+E                                                                                                      "'DefinedNameDict' "
+E                                                                                                      'object '
+E                                                                                                      'has '...
+E         
+E         ...Full output truncated (4 lines hidden), use '-vv' to show
+
+tests/lib/test_information.py:48: AssertionError
+----------------------------- Captured stdout call -----------------------------
+Found 234 formulas to evaluate
+200 formulas left to process
+100 formulas left to process
+0 formulas left to process
+------------------------------ Captured log call -------------------------------
+WARNING  pycel:excelformula.py:361 Table Name not found: na
+WARNING  pycel:excelformula.py:875 Traceback (most recent call last):
+  File "/workspaces/pycel/src/pycel/excelutil.py", line 1269, in fixup
+    return PYTHON_AST_OPERATORS[op](left_op, right_op)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ZeroDivisionError: division by zero
+Eval: 1 / 0
+Values: 1 Div 0
+WARNING  pycel:excelformula.py:875 Traceback (most recent call last):
+  File "/workspaces/pycel/src/pycel/excelutil.py", line 1269, in fixup
+    return PYTHON_AST_OPERATORS[op](left_op, right_op)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ZeroDivisionError: division by zero
+Eval: 1 / 0
+Values: 1 Div 0
+_________________________________ test_text_ws _________________________________
+
+fixture_xls_copy = <function fixture_xls_copy.<locals>.wrapped at 0x7f22c979a5c0>
+
+    def test_text_ws(fixture_xls_copy):
+        compiler = ExcelCompiler(fixture_xls_copy('text.xlsx'))
+        result = compiler.validate_serialized()
+>       assert result == {}
+E       assert {'exceptions'...inedName'")]}} == {}
+E         
+E         Left contains 1 more item:
+E         {'exceptions': {"AttributeError: 'DefinedNameDict' object has no attribute 'definedName'": [('All!O5',
+E                                                                                                      '=VALUE(A5)',
+E                                                                                                      "'DefinedNameDict' "
+E                                                                                                      'object '
+E                                                                                                      'has '...
+E         
+E         ...Full output truncated (4 lines hidden), use '-vv' to show
+
+tests/lib/test_text.py:46: AssertionError
+----------------------------- Captured stdout call -----------------------------
+Found 402 formulas to evaluate
+400 formulas left to process
+400 formulas left to process
+400 formulas left to process
+300 formulas left to process
+300 formulas left to process
+200 formulas left to process
+100 formulas left to process
+0 formulas left to process
+------------------------------ Captured log call -------------------------------
+WARNING  pycel:excelformula.py:361 Table Name not found: na
+WARNING  pycel:excelformula.py:875 Traceback (most recent call last):
+  File "/workspaces/pycel/src/pycel/excelutil.py", line 1269, in fixup
+    return PYTHON_AST_OPERATORS[op](left_op, right_op)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ZeroDivisionError: division by zero
+Eval: 1 / 0
+Values: 1 Div 0
+WARNING  pycel:excelformula.py:875 Traceback (most recent call last):
+  File "/workspaces/pycel/src/pycel/excelutil.py", line 1269, in fixup
+    return PYTHON_AST_OPERATORS[op](left_op, right_op)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ZeroDivisionError: division by zero
+Eval: 1 / 0
+Values: 1 Div 0
+______________________ test_validate_calcs_excel_compiler ______________________
+
+excel_compiler = <pycel.excelcompiler.ExcelCompiler object at 0x7f22c8aac410>
+
+    def test_validate_calcs_excel_compiler(excel_compiler):
+        """Find all formula cells w/ values and verify calc"""
+        errors = excel_compiler.validate_calcs()
+        msg = json.dumps(errors, indent=2)
+>       assert msg == '{}'
+E       assert '{\n  "except...    ]\n  }\n}' == '{}'
+E         
+E         - {}
+E         + {
+E         +   "exceptions": {
+E         +     "AttributeError: 'DefinedNameDict' object has no attribute 'definedName'": [
+E         +       [
+E         +         "sref!B7",...
+E         
+E         ...Full output truncated (6 lines hidden), use '-vv' to show
+
+tests/test_excelcompiler.py:406: AssertionError
+----------------------------- Captured stdout call -----------------------------
+Found 120 formulas to evaluate
+100 formulas left to process
+0 formulas left to process
+------------------------------ Captured log call -------------------------------
+WARNING  pycel:excelformula.py:361 Table Name not found: Table1
+_____________________ test_evaluate_conditional_formatting _____________________
+
+cond_format_ws = <pycel.excelcompiler.ExcelCompiler object at 0x7f22c3b908f0>
+
+    def test_evaluate_conditional_formatting(cond_format_ws):
+        cells_addrs = [
+            AddressCell('B2'),
+            AddressCell('Sheet1!B3'),
+            AddressRange('Sheet1!B4:B6'),
+        ]
+>       formats = cond_format_ws.eval_conditional_formats(cells_addrs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_excelcompiler.py:506: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/pycel/excelcompiler.py:993: in eval_conditional_formats
+    return type(address)(
+src/pycel/excelcompiler.py:994: in <genexpr>
+    self.eval_conditional_formats(c) for c in address)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/pycel/excelcompiler.py:1011: in eval_conditional_formats
+    formats = self.excel.conditional_format(address)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <pycel.excelwrapper.ExcelOpxWrapper object at 0x7f22c3b5e2d0>
+address = AddressCell(address='Sheet1!B2', sheet='Sheet1', col_idx=2, row=2, coordinate='B2')
+
+    def conditional_format(self, address):
+        """ Return the conditional formats applicable for this cell """
+        address = AddressCell(address)
+        all_formats = self.workbook[address.sheet].conditional_formatting
+        formats = (cf for cf in all_formats if address.coordinate in cf)
+        rules = []
+        for cf in formats:
+>           origin = AddressRange(cf.cells.ranges[0].coord).start
+                                  ^^^^^^^^^^^^^^^^^^
+E           TypeError: 'set' object is not subscriptable
+
+src/pycel/excelwrapper.py:222: TypeError
+_______________________________ test_plot_graph ________________________________
+
+excel_compiler = <pycel.excelcompiler.ExcelCompiler object at 0x7f22c7c21310>
+tmpdir = local('/tmp/pytest-of-codespace/pytest-2/fixtures0')
+
+    def test_plot_graph(excel_compiler, tmpdir):
+>       with pytest.raises(ImportError,
+                           match="Package 'matplotlib' is not installed"):
+E                          Failed: DID NOT RAISE <class 'ImportError'>
+
+tests/test_excelcompiler.py:651: Failed
+______________________ test_multi_area_range_defined_name ______________________
+
+    def test_multi_area_range_defined_name():
+    
+        wb = Workbook()
+        ws = wb.active
+        ws['A1'] = 1
+        ws['A2'] = 2
+        ws['A3'] = 3
+        ws['A4'] = 4
+        ws['B1'] = '=SUM(A1,A2)'
+        ws['B2'] = '=SUM(_a2,A3)'
+        ws['B3'] = '=SUM(_a1_a3)'
+    
+>       wb.defined_names.append(
+        ^^^^^^^^^^^^^^^^^^^^^^^
+            DefinedName(name='_a2', attr_text='Sheet!$A$4,Sheet!$A$1:$A$2'))
+E       AttributeError: 'DefinedNameDict' object has no attribute 'append'
+
+tests/test_excelcompiler.py:698: AttributeError
+_____________________ test_evaluate_after_range_eval_error _____________________
+
+    def test_evaluate_after_range_eval_error():
+        wb = Workbook()
+        ws = wb.active
+        ws['A1'], ws['B1'], ws['C1'] = 0, 1, 0
+        ws['A2'] = '=UNKNOWN(A1:C1,0,FALSE,1,TRUE)'
+>       ws.formula_attributes['A2'] = {'t': 'array', 'ref': "A2:C2"}
+        ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Worksheet' object has no attribute 'formula_attributes'
+
+tests/test_excelcompiler.py:1120: AttributeError
+______________________________ test_error_logging ______________________________
+
+caplog = <_pytest.logging.LogCaptureFixture object at 0x7f22c1786480>
+
+    def test_error_logging(caplog):
+        eval_ctx = ExcelFormula.build_eval_context(
+            lambda x: DIV0, lambda x: [[1, 1], [1, DIV0]],
+            logging.getLogger('pycel_x'))
+    
+        caplog.set_level(logging.INFO)
+        assert 3 == eval_ctx(ExcelFormula('=iferror(1/0,3)'))
+        assert 1 == len(caplog.records)
+        assert "INFO" == caplog.records[0].levelname
+        assert "1 Div 0" in caplog.records[0].message
+    
+        assert DIV0 == eval_ctx(ExcelFormula('=1/0'))
+        assert 2 == len(caplog.records)
+        assert "WARNING" == caplog.records[1].levelname
+    
+        message = """return PYTHON_AST_OPERATORS[op](left_op, right_op)
+    ZeroDivisionError: division by zero
+    Eval: 1 / 0
+    Values: 1 Div 0"""
+>       assert message in caplog.records[1].message
+E       assert 'return PYTHON_AST_OPERATORS[op](left_op, right_op)\nZeroDivisionError: division by zero\nEval: 1 / 0\nValues: 1 Div 0' in 'Traceback (most recent call last):\n  File "/workspaces/pycel/src/pycel/excelutil.py", line 1269, in fixup\n    retur...        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nZeroDivisionError: division by zero\nEval: 1 / 0\nValues: 1 Div 0'
+E        +  where 'Traceback (most recent call last):\n  File "/workspaces/pycel/src/pycel/excelutil.py", line 1269, in fixup\n    retur...        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nZeroDivisionError: division by zero\nEval: 1 / 0\nValues: 1 Div 0' = <LogRecord: pycel_x, 30, /workspaces/pycel/src/pycel/excelformula.py, 875, "Traceback (most recent call last):\n  File ...          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nZeroDivisionError: division by zero\nEval: 1 / 0\nValues: 1 Div 0">.message
+
+tests/test_excelformula.py:982: AssertionError
+------------------------------ Captured log call -------------------------------
+INFO     pycel_x:excelformula.py:875 Traceback (most recent call last):
+  File "/workspaces/pycel/src/pycel/excelutil.py", line 1269, in fixup
+    return PYTHON_AST_OPERATORS[op](left_op, right_op)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ZeroDivisionError: division by zero
+Eval: iferror(1 / 0, 3)
+Values: 1 Div 0
+WARNING  pycel_x:excelformula.py:875 Traceback (most recent call last):
+  File "/workspaces/pycel/src/pycel/excelutil.py", line 1269, in fixup
+    return PYTHON_AST_OPERATORS[op](left_op, right_op)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ZeroDivisionError: division by zero
+Eval: 1 / 0
+Values: 1 Div 0
+_____________________ test_range_boundaries_defined_names ______________________
+
+excel = <pycel.excelwrapper.ExcelOpxWrapper object at 0x7f22c3dc3230>
+ATestCell = <class 'conftest.ATestCell.<locals>.ATestCell'>
+
+    def test_range_boundaries_defined_names(excel, ATestCell):
+        cell = ATestCell('A', 1, excel=excel)
+    
+>       assert ((3, 1, 3, 18), 'Sheet1') == range_boundaries('SINUS', cell)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_excelutil.py:574: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+address = 'SINUS'
+cell = <conftest.ATestCell.<locals>.ATestCell object at 0x7f22c193fb90>
+sheet = None
+
+    def range_boundaries(address, cell=None, sheet=None):
+        try:
+            # if this is normal reference then just use the openpyxl converter
+            boundaries = openpyxl_range_boundaries(address)
+            if None not in boundaries or ':' in address:
+                return boundaries, sheet
+        except ValueError:
+            pass
+    
+        # test for R1C1 style address
+        boundaries = r1c1_boundaries(address, cell=cell, sheet=sheet)
+        if boundaries:
+            return boundaries
+    
+        # Try to see if the is a structured table reference
+        boundaries = structured_reference_boundaries(address, cell=cell)
+        if boundaries:
+            return boundaries
+    
+        # Try to see if this is a defined name
+        name_addr = cell and cell.excel and cell.excel.defined_names.get(address)
+        if name_addr:
+            if len(name_addr) == 1:
+                return openpyxl_range_boundaries(name_addr[0][0]), name_addr[0][1]
+            else:
+                return AddressMultiAreaRange(tuple(
+                    AddressRange(range_alias, sheet=worksheet)
+                    for range_alias, worksheet in name_addr)), None
+    
+        addrs = address.split(':')
+        if len(addrs) > 2:
+            # Multi colon range resolves to rectangle containing all nodes
+            try:
+                nodes = tuple(AddressRange.create(addr, cell=cell, sheet=sheet)
+                              for addr in addrs)
+    
+                min_col_idx = min(n.col_idx for n in nodes)
+                max_col_idx = max((n.col_idx + n.size.width - 1) for n in nodes)
+                min_row = min(n.row for n in nodes)
+                max_row = max((n.row + n.size.height - 1) for n in nodes)
+    
+                sheets = {n.sheet for n in nodes if n.sheet}
+                if not sheet:
+                    sheet = next(iter(sheets), None)
+                assert not sheets or sheets == {sheet}
+    
+                return (min_col_idx, min_row, max_col_idx, max_row), sheet
+            except ValueError:
+                pass
+    
+>       raise ValueError(f"{address} is not a valid coordinate or range")
+E       ValueError: SINUS is not a valid coordinate or range
+
+src/pycel/excelutil.py:752: ValueError
+____________________________ test_get_defined_names ____________________________
+
+excel = <pycel.excelwrapper.ExcelOpxWrapper object at 0x7f22c3dc3230>
+
+    def test_get_defined_names(excel):
+        expected = {'SINUS': [('$C$1:$C$18', 'Sheet1')]}
+>       assert expected == excel.defined_names
+E       AssertionError: assert {'SINUS': [('...', 'Sheet1')]} == {}
+E         
+E         Left contains 1 more item:
+E         {'SINUS': [('$C$1:$C$18', 'Sheet1')]}
+E         Use -v to get more diff
+
+tests/test_excelwrapper.py:125: AssertionError
+________________ test_conditional_format[Sheet1!B2-expecteds0] _________________
+
+cond_format_ws = <pycel.excelcompiler.ExcelCompiler object at 0x7f22c3b908f0>
+address = 'Sheet1!B2'
+expecteds = ((1, '=B2=2'), (2, '=B2>1'), (4, '=B2>0'), (5, '=B2<0'))
+
+    @pytest.mark.parametrize(
+        'address, expecteds',
+        (
+            ('Sheet1!B2', ((1, '=B2=2'), (2, '=B2>1'), (4, '=B2>0'), (5, '=B2<0'))),
+            ('Sheet1!B5', ((1, '=B5=2'), (2, '=B5>1'), (4, '=B5>0'), (5, '=B5<0'))),
+            ('Sheet1!A1', ()),
+        )
+    )
+    def test_conditional_format(cond_format_ws, address, expecteds):
+        excel = cond_format_ws.excel
+>       results = excel.conditional_format(address)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_excelwrapper.py:233: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <pycel.excelwrapper.ExcelOpxWrapper object at 0x7f22c3b5e2d0>
+address = AddressCell(address='Sheet1!B2', sheet='Sheet1', col_idx=2, row=2, coordinate='B2')
+
+    def conditional_format(self, address):
+        """ Return the conditional formats applicable for this cell """
+        address = AddressCell(address)
+        all_formats = self.workbook[address.sheet].conditional_formatting
+        formats = (cf for cf in all_formats if address.coordinate in cf)
+        rules = []
+        for cf in formats:
+>           origin = AddressRange(cf.cells.ranges[0].coord).start
+                                  ^^^^^^^^^^^^^^^^^^
+E           TypeError: 'set' object is not subscriptable
+
+src/pycel/excelwrapper.py:222: TypeError
+________________ test_conditional_format[Sheet1!B5-expecteds1] _________________
+
+cond_format_ws = <pycel.excelcompiler.ExcelCompiler object at 0x7f22c3b908f0>
+address = 'Sheet1!B5'
+expecteds = ((1, '=B5=2'), (2, '=B5>1'), (4, '=B5>0'), (5, '=B5<0'))
+
+    @pytest.mark.parametrize(
+        'address, expecteds',
+        (
+            ('Sheet1!B2', ((1, '=B2=2'), (2, '=B2>1'), (4, '=B2>0'), (5, '=B2<0'))),
+            ('Sheet1!B5', ((1, '=B5=2'), (2, '=B5>1'), (4, '=B5>0'), (5, '=B5<0'))),
+            ('Sheet1!A1', ()),
+        )
+    )
+    def test_conditional_format(cond_format_ws, address, expecteds):
+        excel = cond_format_ws.excel
+>       results = excel.conditional_format(address)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_excelwrapper.py:233: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <pycel.excelwrapper.ExcelOpxWrapper object at 0x7f22c3b5e2d0>
+address = AddressCell(address='Sheet1!B5', sheet='Sheet1', col_idx=2, row=5, coordinate='B5')
+
+    def conditional_format(self, address):
+        """ Return the conditional formats applicable for this cell """
+        address = AddressCell(address)
+        all_formats = self.workbook[address.sheet].conditional_formatting
+        formats = (cf for cf in all_formats if address.coordinate in cf)
+        rules = []
+        for cf in formats:
+>           origin = AddressRange(cf.cells.ranges[0].coord).start
+                                  ^^^^^^^^^^^^^^^^^^
+E           TypeError: 'set' object is not subscriptable
+
+src/pycel/excelwrapper.py:222: TypeError
+=============================== warnings summary ===============================
+tests/lib/test_date_time.py: 1519 warnings
+tests/lib/test_information.py: 1 warning
+tests/lib/test_logical.py: 82 warnings
+tests/lib/test_lookup.py: 222 warnings
+tests/lib/test_stats.py: 224 warnings
+tests/lib/test_text.py: 10 warnings
+tests/test_excelcompiler.py: 2476 warnings
+tests/test_excelformula.py: 95 warnings
+tests/test_excellib.py: 28 warnings
+  /workspaces/pycel/src/pycel/excelformula.py:995: DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    op = ast.Str(s=type(node_op).__name__)
+
+tests/lib/test_date_time.py: 1518 warnings
+tests/lib/test_information.py: 1 warning
+tests/lib/test_logical.py: 82 warnings
+tests/lib/test_lookup.py: 222 warnings
+tests/lib/test_stats.py: 224 warnings
+tests/lib/test_text.py: 10 warnings
+tests/test_excelcompiler.py: 2476 warnings
+tests/test_excelformula.py: 95 warnings
+tests/test_excellib.py: 28 warnings
+  /usr/local/python/3.12.1/lib/python3.12/ast.py:587: DeprecationWarning: Attribute s is deprecated and will be removed in Python 3.14; use value instead
+    return Constant(*args, **kwargs)
+
+tests/lib/test_logical.py: 78 warnings
+tests/lib/test_lookup.py: 90 warnings
+tests/test_excelcompiler.py: 1 warning
+tests/test_excelformula.py: 10 warnings
+  /workspaces/pycel/src/pycel/excelformula.py:989: DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    left = ast.Str(EMPTY)
+
+tests/test_package.py::test_module_version_components
+  /workspaces/pycel/tests/test_package.py:45: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+    loose = LooseVersion(pycel.__version__).version
+
+tests/test_package.py: 50 warnings
+  /workspaces/pycel/tests/test_package.py:64: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+    assert LooseVersion(v1[1:-1]) > LooseVersion(v2[1:-1])
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/lib/test_information.py::test_information_ws - assert {'exceptio...
+FAILED tests/lib/test_text.py::test_text_ws - assert {'exceptions'...inedName...
+FAILED tests/test_excelcompiler.py::test_validate_calcs_excel_compiler - asse...
+FAILED tests/test_excelcompiler.py::test_evaluate_conditional_formatting - Ty...
+FAILED tests/test_excelcompiler.py::test_plot_graph - Failed: DID NOT RAISE <...
+FAILED tests/test_excelcompiler.py::test_multi_area_range_defined_name - Attr...
+FAILED tests/test_excelcompiler.py::test_evaluate_after_range_eval_error - At...
+FAILED tests/test_excelformula.py::test_error_logging - assert 'return PYTHON...
+FAILED tests/test_excelutil.py::test_range_boundaries_defined_names - ValueEr...
+FAILED tests/test_excelwrapper.py::test_get_defined_names - AssertionError: a...
+FAILED tests/test_excelwrapper.py::test_conditional_format[Sheet1!B2-expecteds0]
+FAILED tests/test_excelwrapper.py::test_conditional_format[Sheet1!B5-expecteds1]
+ERROR tests/test_package.py::test_binder_requirements - ModuleNotFoundError: ...
+ERROR tests/test_package.py::test_changes_rst - ModuleNotFoundError: No modul...
+========== 12 failed, 2972 passed, 9543 warnings, 2 errors in 17.05s ===========
