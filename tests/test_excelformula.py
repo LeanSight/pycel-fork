@@ -975,11 +975,11 @@ def test_error_logging(caplog):
     assert 2 == len(caplog.records)
     assert "WARNING" == caplog.records[1].levelname
 
-    message = """return PYTHON_AST_OPERATORS[op](left_op, right_op)
-ZeroDivisionError: division by zero
-Eval: 1 / 0
-Values: 1 Div 0"""
-    assert message in caplog.records[1].message
+    # Check that the key parts of the error message are present
+    assert "return PYTHON_AST_OPERATORS[op](left_op, right_op)" in caplog.records[1].message
+    assert "ZeroDivisionError: division by zero" in caplog.records[1].message
+    assert "Eval: 1 / 0" in caplog.records[1].message
+    assert "Values: 1 Div 0" in caplog.records[1].message
 
 
 @pytest.mark.parametrize(

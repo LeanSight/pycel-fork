@@ -219,7 +219,9 @@ class ExcelOpxWrapper(ExcelWrapper):
         formats = (cf for cf in all_formats if address.coordinate in cf)
         rules = []
         for cf in formats:
-            origin = AddressRange(cf.cells.ranges[0].coord).start
+            # In OpenPyXL 3.x, cf.cells.ranges is a set, not a list
+            first_range = next(iter(cf.cells.ranges))
+            origin = AddressRange(first_range.coord).start
             row_offset = address.row - origin.row
             col_offset = address.col_idx - origin.col_idx
             for rule in cf.rules:

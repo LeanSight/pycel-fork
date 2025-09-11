@@ -648,9 +648,12 @@ def test_gen_dot(excel_compiler, tmpdir):
 
 
 def test_plot_graph(excel_compiler, tmpdir):
-    with pytest.raises(ImportError,
-                       match="Package 'matplotlib' is not installed"):
-        excel_compiler.plot_graph()
+    # Mock matplotlib import failure to test error handling
+    with mock.patch.dict('sys.modules', {'matplotlib.pyplot': None}):
+        with mock.patch('builtins.__import__', side_effect=ImportError("No module named 'matplotlib'")):
+            with pytest.raises(ImportError,
+                               match="Package 'matplotlib' is not installed"):
+                excel_compiler.plot_graph()
 
     import sys
     mock_imports = (
@@ -1115,10 +1118,10 @@ def test_evaluate_after_range_eval_error():
     ws = wb.active
     ws['A1'], ws['B1'], ws['C1'] = 0, 1, 0
     ws['A2'] = '=UNKNOWN(A1:C1,0,FALSE,1,TRUE)'
-    ws.formula_attributes['A2'] = {'t': 'array', 'ref': "A2:C2"}
+    ws.array_formulae['A2:C2'] = 'UNKNOWN(A1:C1,0,FALSE,1,TRUE)'
     ws['A3'] = 'hello'
     ws['A4'] = '=UNKNOWN(A1:C1,1,FALSE,0,TRUE)'
-    ws.formula_attributes['A4'] = {'t': 'array', 'ref': "A4:C4"}
+    ws.array_formulae['A4:C4'] = 'UNKNOWN(A1:C1,1,FALSE,0,TRUE)'
     ws['A5'] = '=AND(A2,A4)'
 
     excel_compiler = ExcelCompiler(excel=wb)

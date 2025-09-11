@@ -29,11 +29,23 @@ def changes_rst():
 @pytest.fixture(scope='session')
 def setup_py():
     with mock.patch('setuptools.setup'), mock.patch('setuptools.find_packages'):
-        cwd = os.getcwd()
-        os.chdir(repo_root)
-        import importlib
-        setup = importlib.import_module('setup')
-        os.chdir(cwd)
+        import sys
+        import importlib.util
+        
+        # Load setup.py as a module
+        setup_path = repo_root / 'setup.py'
+        spec = importlib.util.spec_from_file_location("setup", setup_path)
+        setup = importlib.util.module_from_spec(spec)
+        
+        # Add repo_root to sys.path temporarily
+        old_path = sys.path[:]
+        sys.path.insert(0, str(repo_root))
+        
+        try:
+            spec.loader.exec_module(setup)
+        finally:
+            sys.path[:] = old_path
+            
         return setup
 
 
